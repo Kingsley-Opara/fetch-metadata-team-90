@@ -38,17 +38,28 @@
   
     {% endblock %}
    
+   
     <script type="text/javascript"  src="{% static 'js/general.js' %}"></script>
  
   </head>
   <body>
-    {% if messages %}
-    {% for message in messages %}
-      <div id="alert" style="text-align: center;" class="alert {{ message.tags }}" role="alert">
-         <span > {{ message }}</span>
+     {% if messages %}
+    {% for message in messages %} 
+    <div id="alert"  class="toast-wrapper">
+      <div  id="toast-{{ message.tags }}">
+          <div class="container-{{ message.tags }}">
+              <i class="fas fa-check-square"></i>
+          </div>
+          <div class="container-{{ message.tags }}">
+              <p>{{ message }}</p>
+          </div>
+          <button id="close-{{ message.tags }}" onclick="closeToastSuccess()">
+              &times;
+          </button>
       </div>
-    {% endfor %}
-{% endif %}
+  </div>
+     {% endfor %}
+{% endif %} 
     {%block navbar%}
     <header>
       <nav>
@@ -69,7 +80,11 @@
               <div class="dropdown-content">
                 <a href="{% url 'dashboard' %}">Dashboard</a>
                 <a href="#">Profile</a>
+
+                <a href="{% url 'edit-profile' request.user.id %}">Settings</a>
+
                 <a href="{% url 'profile' %}">Settings</a>
+
                 <a href="{% url 'logout' %}">Log out</a>
               </div>
             </div>
@@ -155,7 +170,35 @@
         <div class="circle"></div>
     </div>
 
-    
+    <script>
+      let x;
+
+      function showToastSuccess(){
+          clearTimeout(x);
+          document.getElementById("toast-success").style.transform = "translateX(0)";
+          x = setTimeout(()=>{
+            document.getElementById("toast-success").style.transform = "translateX(400px)"
+          }, 4000);
+      }
+      showToastSuccess()
+      function closeToastSuccess(){
+        document.getElementById("toast-success").style.transform = "translateX(400px)";
+      }
+      
+      
+      function showToastError(){
+          clearTimeout(x);
+          document.getElementById("toast-error").style.transform = "translateX(0)";
+          x = setTimeout(()=>{
+              document.getElementById("toast-error").style.transform = "translateX(400px)"
+          }, 4000);
+      }
+      showToastError()
+      function closeToastError(){
+        document.getElementById("toast-error").style.transform = "translateX(400px)";
+      }
+      
+    </script>
    
 
     <script type="text/javascript"  src="{% static 'js/loader.js' %}"></script>
