@@ -52,7 +52,6 @@ class ContactView(View):
             subject = request.POST['subject']
             message_email = request.POST['message']
             message_email2 = f'{message_email} from {email}'
-            print(message_email2, settings.EMAIL_HOST_USER)
             try:
                 send_mail(subject, message_email2, email, 
                 [settings.EMAIL_HOST_USER], fail_silently=False,)
@@ -87,6 +86,9 @@ class DocumentationView(TemplateView):
 class ArchiveView(TemplateView):
     template_name = 'archive.html'
 
+class StatusView(TemplateView):
+    template_name = 'status.html'
+
 class DashboardView(LoginRequiredMixin, View):
     template_name = 'dashboard.html'
     form = FileUploadForm
@@ -106,6 +108,7 @@ class DashboardView(LoginRequiredMixin, View):
             _form.user = request.user
             saved_data = form.save()
             print(saved_data.file_name)
+            
             self.context['file_list'] = self.request.user.user_file.all()
             if saved_data:
                 self.context['new_data'] = self.context['file_list'][0]
@@ -113,10 +116,11 @@ class DashboardView(LoginRequiredMixin, View):
                 self.context['new_data'] = None
 
             
-            
+            messages.success(request, "Data extracted successfully")
             return render(request, self.template_name, self.context)
         else:
             self.context['form'] = form
+            messages.error(request, "Extraction failed try again")
             return render(request, self.template_name, self.context)
 
 class SavePageView(LoginRequiredMixin, View):
